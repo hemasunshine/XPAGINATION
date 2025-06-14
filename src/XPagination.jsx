@@ -4,23 +4,27 @@ const XPagination = () => {
   const [employees, setEmployees] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const EMPLOYEES_PER_PAGE = 10;
 
   useEffect(() => {
     const fetchEmployees = async () => {
+      setIsLoading(true);
       try {
         const response = await fetch(
           "https://geektrust.s3-ap-southeast-1.amazonaws.com/adminui-problem/members.json"
         );
         if (!response.ok) {
-          throw new Error("Network response was not ok");
+          throw new Error("Failed to fetch data");
         }
         const data = await response.json();
         setEmployees(data);
       } catch (error) {
         setError(error.message);
-        alert("failed to fetch data");
+        alert("Failed to fetch data");
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -36,24 +40,26 @@ const XPagination = () => {
 
   const handlePrevious = () => {
     if (currentPage > 1) {
-      setCurrentPage((prev) => prev - 1);
+      setCurrentPage(currentPage - 1);
     }
   };
 
   const handleNext = () => {
     if (currentPage < totalPages) {
-      setCurrentPage((prev) => prev + 1);
+      setCurrentPage(currentPage + 1);
     }
   };
+
+  if (isLoading) {
+    return <div style={{ textAlign: "center", padding: "2rem" }}>Loading...</div>;
+  }
 
   return (
     <div style={{ padding: "2rem" }}>
       <h2 style={{ textAlign: "center" }}>Employee Data Table</h2>
 
       {error && (
-        <p style={{ color: "red", textAlign: "center" }}>
-          Error: {error}
-        </p>
+        <p style={{ color: "red", textAlign: "center" }}>Error: {error}</p>
       )}
 
       <table
@@ -90,8 +96,17 @@ const XPagination = () => {
         <button
           data-testid="prev-btn"
           onClick={handlePrevious}
-          disabled={currentPage === 1}
-          style={{ backgroundColor: "teal", color: "white" }}
+          disabled={currentPage === 1 || isLoading}
+          style={{ 
+            backgroundColor: "teal", 
+            color: "white",
+            margin: "0 0.5rem",
+            padding: "0.5rem 1rem",
+            border: "none",
+            borderRadius: "4px",
+            cursor: currentPage === 1 ? "not-allowed" : "pointer",
+            opacity: currentPage === 1 ? 0.6 : 1
+          }}
         >
           Previous
         </button>
@@ -107,14 +122,23 @@ const XPagination = () => {
             borderRadius: "4px",
           }}
         >
-          {currentPage}
+          {currentPage} 
         </span>
 
         <button
           data-testid="next-btn"
           onClick={handleNext}
-          disabled={currentPage === totalPages}
-          style={{ backgroundColor: "teal", color: "white" }}
+          disabled={currentPage === totalPages || isLoading}
+          style={{ 
+            backgroundColor: "teal", 
+            color: "white",
+            margin: "0 0.5rem",
+            padding: "0.5rem 1rem",
+            border: "none",
+            borderRadius: "4px",
+            cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+            opacity: currentPage === totalPages ? 0.6 : 1
+          }}
         >
           Next
         </button>
