@@ -49,9 +49,21 @@ const XPagination = () => {
   return (
     <div style={{ padding: "2rem" }}>
       <h2 style={{ textAlign: "center" }}>Employee Data Table</h2>
+
+      {error && (
+        <p style={{ color: "red", textAlign: "center" }}>
+          Error: {error}
+        </p>
+      )}
+
       <table
         border="1"
-        style={{ width: "100%", borderCollapse: "collapse", marginTop: "2rem",textAlign:"center" }}
+        style={{
+          width: "100%",
+          borderCollapse: "collapse",
+          marginTop: "2rem",
+          textAlign: "center",
+        }}
       >
         <thead style={{ backgroundColor: "teal", color: "white" }}>
           <tr>
@@ -75,11 +87,35 @@ const XPagination = () => {
 
       {/* Pagination Controls */}
       <div style={{ textAlign: "center", marginTop: "1rem" }}>
-        <button onClick={handlePrevious} disabled={currentPage === 1} style={{ backgroundColor: "teal", color: "white" }}>
+        <button
+          data-testid="prev-btn"
+          onClick={handlePrevious}
+          disabled={currentPage === 1}
+          style={{ backgroundColor: "teal", color: "white" }}
+        >
           Previous
         </button>
-        <button style={{ margin: "0 1rem" ,border:"1rem", backgroundColor: "teal", color: "white"} }>{currentPage}</button>
-        <button onClick={handleNext} disabled={currentPage === totalPages}  style={{ backgroundColor: "teal", color: "white" }}>
+
+        <span
+          data-testid="page-number"
+          style={{
+            margin: "0 1rem",
+            padding: "0.5rem 1rem",
+            display: "inline-block",
+            backgroundColor: "teal",
+            color: "white",
+            borderRadius: "4px",
+          }}
+        >
+          {currentPage}
+        </span>
+
+        <button
+          data-testid="next-btn"
+          onClick={handleNext}
+          disabled={currentPage === totalPages}
+          style={{ backgroundColor: "teal", color: "white" }}
+        >
           Next
         </button>
       </div>
